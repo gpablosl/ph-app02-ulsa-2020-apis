@@ -8,7 +8,7 @@ const pokemon = {
 
 const GetPokemon = async ()=>{
     const url = 'https://pokeapi.co/api/v2/pokemon/regice';
-
+    console.log(url);
     const data = await fetch(url);
     const dataJson = await data.json();
 
