@@ -1,37 +1,77 @@
 const pokemon = {
     sprite: document.getElementById('pokemon-image'),
-    specie: document.getElementById('pokemon-specie'),
-    abilities: document.getElementById('pokemon-abilities'),
-    group: document.getElementById('pokemon-group'),
-    information: document.getElementById('pokemon-information'),
     name: document.getElementById('pokemon-name'),
-    weight: document.getElementById('pokemon-weight'),
-    stats: document.getElementById('pokemon-stats'),
-    type: document.getElementById('pokemon-type')
+    types: document.getElementById('pokemon-types'),
+    abilities: document.getElementById('pokemon-abilities')
 }
 
 
 const GetPokemon = async ()=>{
     const url = 'https://pokeapi.co/api/v2/pokemon/regice';
-
-
+    console.log(url);
     const data = await fetch(url);
     const dataJson = await data.json();
 
+    const {sprites, name, types, abilities} = dataJson;
+
+    types.forEach(element => {
+        const {type} = element;
+        //console.log(type.name);
+        pokemon.types.innerHTML += `<li>${type.name}</li>`;
+    });
+
+    abilities.forEach(element => {
+        const{ability} = element;
+        //pokemon.abilities.innerHTML += `<li>${ability.name}</li>`;
+        //console.log(ability.url);
+        GetAbilityInfo(ability.url,  ability.name);
+
+        //console.log(pokemonAbilitesInfo);
+    });
     
-    console.log(await dataJson);
+    //console.log(await abilities);
 
+    pokemon.sprite.src = await sprites.front_default;
+    pokemon.name.innerHTML = await `Name: ${name}`;
+}
 
-    pokemon.sprite.src = await dataJson.sprites.front_default;
-    pokemon.name.innerHTML = await `Name: ${dataJson.name}`;
-    pokemon.abilities.innerHTML = await `abilities: ${dataJson.abilities}`;
-    pokemon.specie.innerHTML = await `species: ${dataJson.species}`;
-    pokemon.weight.innerHTML = await `weight: ${dataJson.weight}`;
-    pokemon.group.innerHTML = await `group: ${dataJson.group}`;
-    pokemon.stats.innerHTML = await `stats: ${dataJson.stats}`;
-    pokemon.type.innerHTML = await `type: ${dataJson.type}`;
+const GetAbilityInfo= async (url, abilityName)=>{
 
+    const data = await fetch(url);
+    const dataJson = await data.json();
+    const{effect_entries} = dataJson;
 
+    let effectsList = '';
+
+    effect_entries.forEach(element => {
+
+        const{effect, language} = element;
+
+        if(language.name === 'en'){
+            //console.log(effect);
+            effectsList += `<li>${effect}</li>`;
+        }
+    });
+
+    pokemon.abilities.innerHTML += 
+    `<li>
+        ${abilityName}
+        <div>effect</div>
+        <ul>
+            ${effectsList}
+        </ul>
+    </li>`;
+
+    /*const abilitiesPokemon = effect_entries.map( element =>{
+        const{effect, language} = element;
+
+        if(language.name === 'en'){
+            //console.log(effect);
+            return effect;
+        }
+    });*/
+
+    //console.log(abilitiesPokemon);
 }
 
 GetPokemon();
